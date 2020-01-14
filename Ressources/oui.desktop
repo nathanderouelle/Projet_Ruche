@@ -1,0 +1,10 @@
+#!/usr/bin/env xdg-open
+[Desktop Entry]
+Version=1.0
+Type=Application
+Terminal=false
+Icon=firefox
+Icon[fr_CA]=firefox
+Exec=firefox https://github.com/PhilippeSimier/Ruche
+Name[fr_CA]=oui
+Name=oui
