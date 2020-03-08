@@ -1,0 +1,128 @@
+Table users: Table qui regroupe les utilisateurs
+id(int(11))-> id de l'utilisateur
+login(varchar(25))-> identifiant de connexion de  l'utilisateur
+encrypted_password(varchar(50))-> mot de passe de connexion de l'utilisateur
+User_API_Key(varchar(50))-> clé API de l'utilateur
+Created_at(timestamp)-> date et heure de création de l'utilisateur
+sign_in_count(int(10))-> nombre de fois que cet utilisateur s'est connecté
+last_sign_in_at(timestamp)-> date et heure de la dernière connexion 
+current_sign_in_at(timestamp)-> date et heure de la connexion actuelle
+time_zone(varchar(25))-> fuseau horraire utilisé par l'utilisateur
+name_user(varchar(50))->nom de l'utilisateur    
+firstName_user(varchar(50))->prénom de l'utilisateur
+number_user(int(10))->numéro de téléphone de l'utilisateur
+mail_user(varchar(100))-> adresse mail de l'utilisateur pour envoyé les rapports hebdomadaire (valeurs moyennes,écarts types, tendances à la hausse ou à la baisse des mesures  effectués)
+
+
+Table things: Table qui regroupe les "Objets Connectés" (Ici ce sont les ruches)
+id(int(11))-> id de l'objet connecté
+user_id(int(11))-> clé etrangère pour relier une ruche  à un utilisateur
+latitude(deicmal(9,6))-> latitude de la ruche
+longitude(decimal(9,6))-> longitude de la ruche
+elevation(float)-> altitude de la ruche
+name(varchar(50))-> nom de la ruche 
+tag(varchar(50))-> tag de la ruche ex: pour la ruche Danemark le tag c le diminutif du nom donc danemark
+status(enum('public','private'))-> status de la ruche(ou objet connecté) si il peut etre accessible par les autres utilisateurs (private) ou seulement par le créateur (public)
+local_ip_address(varchar(20))-> adresse ip de la ruche (objet connecté)
+class(varchar(20))-> class de l'objet (objet,capteur, etc )
+
+
+Table things_channels: Table qui sert à relier la table 
+id(int(11))-> id le la "liaison"
+thing_id(int(11))-> id de de la ruche(objet connecté)
+channel_id(int(11))-> id du channel
+
+
+Table channels: Table qui regroupe les cannaux (genre Un canal mesures intérieurs et un autre mesures extérieures)
+id(int(11))-> id du canal 
+name(varchar(50))-> Nom du canal (mesures intérieures / mesures extérieures)
+field1(varchar(50))-> nom du champ de mesures
+field2(varchar(50))-> nom du champ de mesures
+field3(varchar(50))-> nom du champ de mesures
+field4(varchar(50))-> nom du champ de mesures
+field5(varchar(50))-> nom du champ de mesures
+field6(varchar(50))-> nom du champ de mesures
+field7(varchar(50))-> nom du champ de mesures
+field8(varchar(50))-> nom du champ de mesures
+status(varchar(11))-> les canaux privés ne peuvent être lus que si la clé API en lecture est fournie dans les arguments de la requête
+tags(varchar(50))-> tag de la ruche auquel ce canal est associé
+write_api_key(varchar(50))-> clé API du canal necéssaire obligatoirement pour ecrire dans un canal
+last_write_at(timestamp)-> date et heure de la dernière réception de données 
+last_entry_id(int(11))-> demander au prof
+
+
+Table feeds: Table qui regroupe les valeurs des cannaux qui est associé à la Table channels (genre le champs field1 de cette table est associé au champs fields1 de la table channels)
+id(int(11))-> clé primaire de la table : id du champs
+id_channel(int(11))-> clé etrengere de la table : pour associer des champs de valeurs à 
+field1(varchar(50))-> valeurs numerique du champs 1
+field2(varchar(50))-> valeurs numerique du champs 2
+field3(varchar(50))-> valeurs numerique du champs 3
+field4(varchar(50))-> valeurs numerique du champs 4
+field5(varchar(50))-> valeurs numerique du champs 5
+field6(varchar(50))-> valeurs numerique du champs 6
+field7(varchar(50))-> valeurs numerique du champs 7
+field8(varchar(50))-> valeurs numerique du champs 8
+date(timestamp)-> date et heure 
+status(varchar(55))-> demander au prof
+latitude(decimal(15,10))-> latitude d'emission de la valeur
+longitude(decimal(15,10))-> longitude d'emission de la valeur
+elevation(double)-> altitude d'emission de la valeur
+
+
+Table thinghttps: Table qui regroupe les requetes HTTP qui sont reliées à la table users par le champs
+id(int(11))-> clé primaire de la table : id de la requette
+user_id(int(11))-> clé etrengere de la tableau qui associe une requette à un utilisateur
+api_key(varchar(16))->clé API de la requete http
+url(varchar(250))-> url de la requette
+auth_name(varchar(50))-> nom d'authentification de la requete si elle en a besoin
+auth_pass(varchar(50))-> mot de passe de la requete si elle en a besoin
+method(enum('GET','POST','PUT','DELETE'))-> methode de la requete  (GET: afin de récupérer des données / POST : Envoi de données au programme situé à l'URL spécifiée / PUT : 	Envoi de données à l'URL spécifiée / DELETE : Suppression de la ressource située à l'URL spécifiée)
+content_type(varchar(50))-> type de contenu du corps de la requete par exemple text/html 
+http_version(enum('1.1','1.0'))-> version du serveur http
+host(varchar(50))-> nom de domaine si besoin 
+body(text)-> corps de la requete http
+name(varchar(50))-> nom de la requete http
+parse(varchar(50))-> champs de la requete qu'on veux analyser
+created_at(timestamp)-> date et heure de la creation de la requete http 
+
+
+Table reacts: Table qui regroupe les reactions (détections qui active une action : envoie d'un sms)
+id(int(11))-> clé primaire de la table : id de la reaction
+user_id(int(11))-> clé etrangere de la table qui relie cette table à la table users
+name(varchar(50))-> nom de la reaction
+run_interval(int(11))-> interval de temps entre chaque verification (ou test de la reaction)
+run_on_insertion(tinyint(1))ou boolean-> si =1 la reaction sera testé à chaque fois qu'un valeur sera insére
+last_run_at(timestamp)-> date et heure du dernier déclenchement de la reaction
+channel_id(int(11))-> cannal sur lequel verifier une valeur
+field_number(int(11))-> champs du canal à verifier
+condition(varchar(15))->  type de condition (contains / starts with / ends with / is equal to / is not equal / lower than / higher than )
+condition_value(float)-> valeur a comparer 
+actionable_id(int(11))-> id de l'action a effectuer lorsque la condition est remplie
+last_result(int(11))-> demander au prof
+actionable_type(varchar(15))-> option qui definie si la reaction s'effectue seulement la premiere fois que la condition est remplie ou a chaque fois .
+action_value(float)-> demander au prof
+latest_value(float)-> dernier valeur
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
